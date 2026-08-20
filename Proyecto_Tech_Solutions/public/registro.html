@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - Tech Solutions</title>
+</head>
+<body>
+    <h2>Registro de Nuevo Usuario</h2>
+    <form id="formRegistro">
+        <label>Nombre:</label>
+        <input type="text" id="nombre" required><br><br>
+        
+        <label>Correo:</label>
+        <input type="email" id="correo" required><br><br>
+        
+        <label>Contraseña:</label>
+        <input type="password" id="clave" required><br><br>
+        
+        <button type="submit">Registrar</button>
+    </form>
+
+    <script>
+        // Profe, aquí capturo el evento del formulario para evitar que recargue la página (preventDefault)
+        // y así poder manejar el envío de datos mediante Fetch API como se pedía en la integración.
+        document.getElementById('formRegistro').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const nombre = document.getElementById('nombre').value;
+            const correo = document.getElementById('correo').value;
+            const clave = document.getElementById('clave').value;
+
+            try {
+                // Hago la petición POST a la ruta que armé en el backend con Express
+                const respuesta = await fetch('/api/auth/registro', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    // Convierto el objeto a JSON para cumplir con el formato que espera el controlador
+                    body: JSON.stringify({ nombre, correo, clave })
+                });
+
+                const data = await respuesta.json();
+
+                if (respuesta.ok) {
+                    alert('¡' + data.mensaje + ' Ahora puedes iniciar sesión.');
+                    window.location.href = '/login.html'; // Redirección simple post-registro
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Profe, aquí atrapo cualquier error de red o de caída del servidor:', error);
+            }
+        });
+    </script>
+</body>
+</html>
